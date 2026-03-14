@@ -1,0 +1,8 @@
+annotations/
+train2014/
+val2014/
+test2014/
+*.pth.tar
+*.json
+*.hdf5
+*.pdf
