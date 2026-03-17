@@ -4,13 +4,13 @@ import torchvision
 
 device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
 
-class Encoder(nn.Module):
+class EncoderWithRNN(nn.Module):
     """
-    Encoder
+    RNN编码器
     """
 
     def __init__(self, encoded_image_size=14):
-        super(Encoder, self).__init__()
+        super().__init__()
         self.enc_image_size = encoded_image_size
 
         # Pretrained ImageNet ResNet-101
@@ -56,7 +56,7 @@ class DecoderWithRNN(nn.Module):
         :param encoder_dim: feature size of encoded images
         :param dropout: dropout
         """
-        super(DecoderWithRNN, self).__init__()
+        super().__init__()
 
         self.encoder_dim = encoder_dim
         self.decoder_dim = cfg['decoder_dim']
@@ -158,9 +158,9 @@ class DecoderWithRNN(nn.Module):
         ############################################################################
         return preds, h, c
 
-class Attention(nn.Module):
+class AttentionForRNN(nn.Module):
     """
-    Attention Network.
+    RNN的注意力机制插件
     """
 
     def __init__(self, encoder_dim, decoder_dim, attention_dim):
@@ -169,7 +169,7 @@ class Attention(nn.Module):
         :param decoder_dim: size of decoder's RNN
         :param attention_dim: size of the attention network
         """
-        super(Attention, self).__init__()
+        super().__init__()
         #################################################################
         # To Do: you need to define some layers for attention module
         # Hint: Firstly, define linear layers to transform encoded tensor
@@ -226,7 +226,7 @@ class DecoderWithAttention(nn.Module):
         :param encoder_dim: feature size of encoded images
         :param dropout: dropout
         """
-        super(DecoderWithAttention, self).__init__()
+        super().__init__()
 
         self.encoder_dim = encoder_dim
         self.decoder_dim = cfg['decoder_dim']
@@ -238,7 +238,7 @@ class DecoderWithAttention(nn.Module):
 
         ############################################################################
         # To Do: define some layers for decoder with attention
-        # self.attention : Attention layer
+        # self.attention : AttentionForRNN layer
         # self.embedding : Embedding layer
         # self.decode_step : decoding LSTMCell, using nn.LSTMCell
         # self.init_h : linear layer to find initial hidden state of LSTMCell
@@ -247,7 +247,7 @@ class DecoderWithAttention(nn.Module):
         # self.fc : linear layer to transform hidden state to scores over vocabulary
         # other layers you may need
         # Your Code Here!
-        self.attention = Attention(self.encoder_dim, self.decoder_dim, self.attention_dim)
+        self.attention = AttentionForRNN(self.encoder_dim, self.decoder_dim, self.attention_dim)
         self.embedding = nn.Embedding(self.vocab_size, self.embed_dim)
         self.decode_step = nn.LSTMCell(self.embed_dim + self.encoder_dim, self.decoder_dim)
         self.init_h = nn.Linear(self.encoder_dim, self.decoder_dim)

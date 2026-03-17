@@ -212,6 +212,15 @@ def clip_gradient(optimizer, grad_clip):
                 param.grad.data.clamp_(-grad_clip, grad_clip)
 
 
+def generate_mask(size):
+    """
+    Transformer掩码:避免Decoder看到未来的token
+    size:序列长度seq_len
+    """
+    # torch.triu(torch.ones(size, size), diagonal=1)生成不含对角线的上三角元素全为1
+    mask=torch.triu(torch.ones(size, size), diagonal=1).bool()
+    return mask==0 # 仅mask=0的位置可见
+
 def save_checkpoint(model_name, epoch, epochs_since_improvement, encoder, decoder, encoder_optimizer, decoder_optimizer,
                     bleu4, is_best):
     """
